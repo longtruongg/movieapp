@@ -1,14 +1,7 @@
-import 'dart:ui';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yuve/blocs/movie_bloc.dart';
-import 'package:yuve/config/app_string.dart';
-import 'package:yuve/models/movie.dart';
-
-final dio = Dio();
+import 'package:yuve/widgets/movies/discover_movie.dart';
+import 'package:yuve/widgets/movies/home.dart';
 
 class HomeMovie extends StatefulWidget {
   @override
@@ -16,84 +9,47 @@ class HomeMovie extends StatefulWidget {
 }
 
 class _HomeMovieState extends State<HomeMovie> {
-  List<Movie> movieList;
-  MovieBloc movieBloc;
+  int selectIndex = 0;
+
+  final List<Widget> childWidget = [
+    Home(),
+    DiscoverMovie(),
+  ];
 
   @override
   void initState() {
     super.initState();
-    // movieBloc = MovieBloc(movieRepository: MovieRepository(dio, baseUrl: AppString.URL));
-    // movieBloc.fethMovie();
-    movieBloc = BlocProvider.of<MovieBloc>(context);
-    movieBloc.add(GetAllMovie());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            "Movie Home ",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-        body: BlocConsumer<MovieBloc, MovieState>(
-          listener: (context, state) {
-            if (state is MovieLoadError) {
-              Scaffold.of(context).showSnackBar(SnackBar(content: Text("Errors : ${state.message}")));
-            } else if (state is MovieLoaded) {
-              Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text("Errors : ${state.movieList.elementAt(1).title}")));
-            }
-          },
-          // ignore: missing_return
-          builder: (context, state) {
-            if (state is MovieInitial) {
-              debugPrint("Value :${state.props}");
-              return buildCenterProgressbar(context);
-            } else if (state is MovieLoading) {
-              return buildCenterProgressbar(context);
-            } else if (state is MovieLoaded) {
-              debugPrint("Value :${state.movieList.length}");
-              return buildMovieItem(context, state.movieList);
-            } else
-              return buildCenterProgressbar(context);
-          },
-        ));
-  }
-
-  Center buildCenterProgressbar(BuildContext context) {
-    return Center(
-      child: CircularProgressIndicator(
-        backgroundColor: Colors.red,
-      ),
+      body: childWidget[selectIndex],
+      bottomSheet: customBottomBar(context),
     );
   }
 
-  Widget buildMovieItem(BuildContext context, List<Movie> movieList) {
-    var sizeConf = MediaQuery.of(context).size;
-    String _posterPath = AppString.POSTER_URL;
-    return GridView.count(
-        crossAxisCount: 2,
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: movieList
-            .map((element) => InkWell(
-                  child: Container(
-                    width: sizeConf.height * 0.3,
-                    height: sizeConf.height * 0.3,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            fit: BoxFit.cover, image: NetworkImage(_posterPath + element.posterPath))),
-                  ),
-                ))
-            .toList());
+  Widget customBottomBar(BuildContext context) {
+    return BottomNavigationBar(
+        currentIndex: selectIndex,
+        backgroundColor: Colors.black26,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.brown,
+        onTap: _onTapChangeWidget,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.movie), label: "Discover"),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_view_day), label: "Coming soon"),
+          BottomNavigationBarItem(icon: Icon(Icons.account_box), label: "Account"),
+        ]);
   }
 
-  @override
-  void dispose() {
-    movieBloc.close();
-    super.dispose();
+  void _onTapChangeWidget(int value) {
+    setState(() {
+      selectIndex = value;
+    });
   }
 }
