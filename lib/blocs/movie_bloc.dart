@@ -16,66 +16,49 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   MovieBloc({this.movieRepository}) : super(MovieInitial());
 
   @override
-  Stream<MovieState> mapEventToState(
-    MovieEvent event,
-  ) async* {
+  Stream<MovieState> mapEventToState(MovieEvent event) async* {
     if (event is MovieInit) {
       yield MovieInitial();
     } else if (event is MovieLoadingg) {
       yield MovieLoading(mess: "Will coming...");
     } else if (event is GetAllMovie) {
-      // yield* fethMovie();
-      try {
-        await Future.delayed(Duration(microseconds: 700));
-        final movies = await movieRepository.getAllMovie(AppString.API);
-        List<Movie> movielist = <Movie>[];
-        movielist.addAll(movies.movieList);
-        print("length of Movies :${movielist.length}");
-       yield  MovieLoaded(movieList: movielist);
-      } on MovieLoadError catch (e) {
-        yield MovieLoadError(message: e.message.toString());
-      }
+      yield* getAllMovie();
     } else if (event is MovieTopRated) {
-      try {
-        await Future.delayed(Duration(seconds: 1));
-        final movieHub = await movieRepository.getTopRated(AppString.API);
-        yield MovieLoaded(movieList: movieHub.movieList);
-      } on MovieLoadError catch (e) {
-        yield MovieLoadError(message: e.message);
-      }
+      yield* getTopRated();
+    } else if (event is MovieUpComing) {
+      yield* getMovieUpComing();
     } else {
-      yield MovieLoadError(message: "Check again ");
+      yield* movieLoadingWithError();
     }
   }
 
-  fethMovie() async {
-    try {
-      await Future.delayed(Duration(microseconds: 700));
-      final movies = await movieRepository.getAllMovie(AppString.API);
-      MovieLoaded(movieList: movies.movieList);
-    } on MovieLoadError catch (e) {
-      MovieLoadError(message: e.message.toString());
-    }
+  Stream<MovieState> getAllMovie() async* {
+    await Future.delayed(Duration(microseconds: 700));
+    final movies = await movieRepository.getAllMovie(AppString.API);
+    List<Movie> movielist = <Movie>[];
+    movielist.addAll(movies.movieList);
+    print("length of Movies :${movielist.length}");
+    yield MovieLoaded(movieList: movielist);
   }
 
-  findMovie() async {
-    try {
-      await Future.delayed(Duration(milliseconds: 700));
-      String query;
-      final resuslt = await movieRepository.findMovieId(AppString.API);
-      MovieUpCome(movieList: resuslt.movieList);
-    } on MovieLoadError catch (e) {
-      MovieLoadError(message: e.message.toString());
-    }
+  Stream<MovieState> getTopRated() async* {
+    await Future.delayed(Duration(milliseconds: 700));
+    final movieHub = await movieRepository.getTopRated(AppString.API);
+    List<Movie> movieList = <Movie>[];
+    movieList.addAll(movieHub.movieList);
+    yield MovieLoaded(movieList: movieList);
   }
 
-  movieSimilar() async {
-    try {
-      String movieId;
-      final result = await movieRepository.similarMovie(movieId, AppString.API);
-      MovieLoaded(movieList: result.movieList);
-    } on MovieLoadError catch (e) {
-      MovieLoadError(message: e.message.toString());
-    }
+  Stream<MovieState> getMovieUpComing() async* {
+    await Future.delayed(Duration(milliseconds: 700));
+    final movies = await movieRepository.getMovieUpComing(AppString.API);
+    final List<Movie> movieList = <Movie>[];
+    movieList.addAll(movies.movieList);
+    yield MovieUpCome(movieList: movieList);
+  }
+
+  Stream<MovieState> movieLoadingWithError() async* {
+    final String mess = "Fetch error check again !";
+    yield MovieLoadError(message: mess);
   }
 }

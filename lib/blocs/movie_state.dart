@@ -35,11 +35,17 @@ class MovieLoaded extends MovieState {
   String toString() => "Value ${movieList.length}";
 }
 
-
 class MovieUpCome extends MovieState {
   final List<Movie> movieList;
 
   const MovieUpCome({this.movieList});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [movieList];
+
+  @override
+  String toString() => "Length of array :${movieList.length}";
 }
 
 class MovieSimilar extends MovieState {

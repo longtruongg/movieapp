@@ -15,8 +15,8 @@ abstract class MovieRepository {
   @GET("/3/movie/top_rated")
   Future<MovieHub> getTopRated(@Query("api_key") String apiKey);
 
-  @GET("/3//movie/upcoming")
-  Future<MovieHub> findMovieId(@Query("api_key") String apiKey);
+  @GET("/3/movie/upcoming")
+  Future<MovieHub>getMovieUpComing(@Query("api_key") String apiKey);
 
   @GET("/3/movie/{movie_id}/similar")
   Future<MovieHub> similarMovie(@Path("movie_id") String movieId, @Query("api_key") String apiKey);

@@ -24,7 +24,11 @@ class _MovieRepository implements MovieRepository {
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>('/3/movie/popular',
         queryParameters: queryParameters,
-        options: RequestOptions(method: 'GET', headers: <String, dynamic>{}, extra: _extra, baseUrl: baseUrl),
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
         data: _data);
     final value = MovieHub.fromJson(_result.data);
     return value;
@@ -36,23 +40,33 @@ class _MovieRepository implements MovieRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'api_key': apiKey};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/3/movie/top_rated',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/3/movie/top_rated',
         queryParameters: queryParameters,
-        options: RequestOptions(method: 'GET', headers: <String, dynamic>{}, extra: _extra, baseUrl: baseUrl),
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
         data: _data);
     final value = MovieHub.fromJson(_result.data);
     return value;
   }
 
   @override
-  Future<MovieHub> findMovieId(apiKey) async {
+  Future<MovieHub> getMovieUpComing(apiKey) async {
     ArgumentError.checkNotNull(apiKey, 'apiKey');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'api_key': apiKey};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/3//movie/upcoming',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/3/movie/upcoming',
         queryParameters: queryParameters,
-        options: RequestOptions(method: 'GET', headers: <String, dynamic>{}, extra: _extra, baseUrl: baseUrl),
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
         data: _data);
     final value = MovieHub.fromJson(_result.data);
     return value;
@@ -65,9 +79,14 @@ class _MovieRepository implements MovieRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'api_key': apiKey};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<Map<String, dynamic>>('/3/movie/$movieId/similar',
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/3/movie/$movieId/similar',
         queryParameters: queryParameters,
-        options: RequestOptions(method: 'GET', headers: <String, dynamic>{}, extra: _extra, baseUrl: baseUrl),
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
         data: _data);
     final value = MovieHub.fromJson(_result.data);
     return value;

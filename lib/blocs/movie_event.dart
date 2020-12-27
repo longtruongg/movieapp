@@ -20,7 +20,9 @@ class MovieTopRated extends MovieEvent {
   const MovieTopRated();
 }
 
-class MovieUpComing extends MovieEvent {}
+class MovieUpComing extends MovieEvent {
+  const MovieUpComing();
+}
 
 class FindMovie extends MovieEvent {
   final String movieName;
@@ -33,4 +35,10 @@ class FindMovie extends MovieEvent {
 
 class SimilarMovie extends MovieEvent {
   const SimilarMovie();
+}
+
+class LoadMoreMovie extends MovieEvent {
+  final String mess;
+
+  const LoadMoreMovie({this.mess});
 }
