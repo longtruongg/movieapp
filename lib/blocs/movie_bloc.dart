@@ -13,7 +13,9 @@ part 'movie_state.dart';
 class MovieBloc extends Bloc<MovieEvent, MovieState> {
   final MovieRepository movieRepository;
 
-  MovieBloc({this.movieRepository}) : super(MovieInitial());
+  MovieBloc({this.movieRepository})
+      : assert(movieRepository != null),
+        super(MovieInitial());
 
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
@@ -27,6 +29,8 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
       yield* getTopRated();
     } else if (event is MovieUpComing) {
       yield* getMovieUpComing();
+    } else if (event is FindMovie) {
+      yield* getSimilarMovies();
     } else {
       yield* movieLoadingWithError();
     }
@@ -34,26 +38,22 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
 
   Stream<MovieState> getAllMovie() async* {
     await Future.delayed(Duration(microseconds: 700));
-    final movies = await movieRepository.getAllMovie(AppString.API);
-    List<Movie> movielist = <Movie>[];
-    movielist.addAll(movies.movieList);
+    List<Movie> movielist = (await movieRepository.getAllMovie(AppString.API)).movieList;
     print("length of Movies :${movielist.length}");
     yield MovieLoaded(movieList: movielist);
   }
 
   Stream<MovieState> getTopRated() async* {
     await Future.delayed(Duration(milliseconds: 700));
-    final movieHub = await movieRepository.getTopRated(AppString.API);
-    List<Movie> movieList = <Movie>[];
-    movieList.addAll(movieHub.movieList);
+
+    List<Movie> movieList = (await movieRepository.getTopRated(AppString.API)).movieList;
     yield MovieLoaded(movieList: movieList);
   }
 
   Stream<MovieState> getMovieUpComing() async* {
     await Future.delayed(Duration(milliseconds: 700));
-    final movies = await movieRepository.getMovieUpComing(AppString.API);
-    final List<Movie> movieList = <Movie>[];
-    movieList.addAll(movies.movieList);
+
+    List<Movie> movieList = (await movieRepository.getMovieUpComing(AppString.API)).movieList;
     yield MovieUpCome(movieList: movieList);
   }
 
@@ -61,4 +61,6 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
     final String mess = "Fetch error check again !";
     yield MovieLoadError(message: mess);
   }
+
+  Stream<MovieState> getSimilarMovies() async* {}
 }

@@ -21,24 +21,21 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Movie Home"),
-          centerTitle: true,
-        ),
         body: BlocConsumer<MovieBloc, MovieState>(
-          listener: (context, state) {
-            if (state is MovieLoadError) return _buildCenterProgress(context);
-          },
-          builder: (context, state) {
-            if (state is MovieInitial) {
-              return _buildCenterProgress(context);
-            } else if (state is MovieLoading) {
-              return _buildLoadingMovie(context);
-            } else if (state is MovieLoaded) {
-              return _buildMovieEachItem(context, state);
-            }
-          },
-        ));
+      listener: (context, state) {
+        if (state is MovieLoadError) return _buildCenterProgress(context);
+      },
+      builder: (context, state) {
+        if (state is MovieInitial) {
+          return _buildCenterProgress(context);
+        } else if (state is MovieLoading) {
+          return _buildLoadingMovie(context);
+        } else if (state is MovieLoaded) {
+          return _buildMovieEachItem(context, state);
+        }
+        return _buildCenterProgress(context);
+      },
+    ));
   }
 
   Widget _buildMovieEachItem(BuildContext context, MovieLoaded state) {
